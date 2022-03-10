@@ -4,6 +4,9 @@ import "./zombieattack.sol";
 import "./erc721.sol";
 import "./safemath.sol";
 
+/// @title A contract that manages transfering zombie ownership
+/// @author K1-R1
+/// @dev Compliant with OpenZeppelin's implementation of the ERC721 spec draft
 contract ZombieOwnership is ZombieAttack, ERC721 {
     using SafeMath for uint256;
 
@@ -23,7 +26,7 @@ contract ZombieOwnership is ZombieAttack, ERC721 {
         uint256 _tokenId
     ) private {
         ownerZombieCount[_to] = ownerZombieCount[_to].add(1);
-        ownerZombieCount[_from] = ownerZombieCount[_from].sub(1);
+        ownerZombieCount[msg.sender] = ownerZombieCount[msg.sender].sub(1);
         zombieToOwner[_tokenId] = _to;
         emit Transfer(_from, _to, _tokenId);
     }
