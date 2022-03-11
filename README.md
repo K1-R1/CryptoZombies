@@ -7,6 +7,6 @@ This repo contains solutions to the cryptozombies course by Loom.
 - Chainlink Path
 - Beyond Ethereum (zkSync)
 
-This repo is primarily for personal reference, and trying different VS code extensions
+This repo is primarily for personal reference (and trying new VS code extensions)
 
 [CryptoZombies by Loom](https://cryptozombies.io/)
