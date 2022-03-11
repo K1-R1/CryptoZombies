@@ -22,6 +22,17 @@ async function getEthereumProvider(ethers, networkName) {
 }
 
 async function initAccount(rinkebyWallet, zkSyncProvider, zksync) {
-    const zkSyncWallet = await zksync.Wallet.fromEthSigner(rinkebyWallet, zkSyncProvider);
-    return zkSyncWallet;
+    const zkSyncWallet = await zksync.Wallet.fromEthSigner(rinkebyWallet, zkSyncProvider)
+    return zkSyncWallet
+}
+
+async function registerAccount(wallet) {
+    console.log(`Registering the ${wallet.address()} account on zkSync`)
+    if (!await wallet.isSigningKeySet()) {
+        if (await wallet.getAccountId() === undefined) {
+            throw new Error('Unknown account');
+        }
+        const changePubkey = await wallet.setSigningKey();
+        await changePubkey.awaitReceipt();
+    }
 }
