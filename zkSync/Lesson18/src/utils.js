@@ -52,11 +52,12 @@ async function depositToZkSync(zkSyncWallet, token, amountToDeposit, tokenSet) {
     }
 }
 
-async function transfer(from, toAddress, amountToTransfer, transferFee, token, zksync, ethers) {
+async function transfer(from, toAddress, amountToTransfer, transferFee, token, zksync, tokenSet) {
+    // 2. Update the following two lines of code
     const closestPackableAmount = zksync.utils.closestPackableTransactionAmount(
-        ethers.utils.parseEther(amountToTransfer))
+        tokenSet.parseToken(token, amountToTransfer))
     const closestPackableFee = zksync.utils.closestPackableTransactionFee(
-        ethers.utils.parseEther(transferFee))
+        tokenSet.parseToken(token, transferFee))
 
     const transfer = await from.syncTransfer({
         to: toAddress,
@@ -89,16 +90,13 @@ async function withdrawToEthereum(wallet, amountToWithdraw, withdrawalFee, token
 
 async function displayZkSyncBalance(wallet, tokenSet) {
     const state = await wallet.getAccountState()
-
-    const committedBalances = state.committed.balances
+    const commitedBbalances = state.committed.balances
     const verifiedBalances = state.verified.balances
-
-    for (const property in committedBalances) {
-        console.log(`Commited ${property} balance for ${wallet.address()}: ${tokenSet.formatToken(property, committedBalances[property])}`)
+    for (const property in commitedBbalances) {
+        console.log(`Commited ${property} balance for ${wallet.address()}: ${tokenSet.formatToken(property, commitedBbalances[property])}`)
     }
     for (const property in verifiedBalances) {
         console.log(`Verified ${property} balance for ${wallet.address()}: ${tokenSet.formatToken(property, verifiedBalances[property])}`)
-
     }
 }
 
