@@ -53,11 +53,8 @@ async function depositToZkSync(zkSyncWallet, token, amountToDeposit, tokenSet) {
 }
 
 async function transfer(from, toAddress, amountToTransfer, transferFee, token, zksync, tokenSet) {
-    // 2. Update the following two lines of code
-    const closestPackableAmount = zksync.utils.closestPackableTransactionAmount(
-        tokenSet.parseToken(token, amountToTransfer))
-    const closestPackableFee = zksync.utils.closestPackableTransactionFee(
-        tokenSet.parseToken(token, transferFee))
+    const closestPackableAmount = zksync.utils.closestPackableTransactionAmount(tokenSet.parseToken(token, amountToTransfer))
+    const closestPackableFee = zksync.utils.closestPackableTransactionFee(tokenSet.parseToken(token, transferFee))
 
     const transfer = await from.syncTransfer({
         to: toAddress,
@@ -70,14 +67,14 @@ async function transfer(from, toAddress, amountToTransfer, transferFee, token, z
     console.log(transferReceipt)
 }
 
-async function getFee(transactionType, address, token, zkSyncProvider, ethers) {
-    const feeInWei = await zkSyncProvider.getTransactionFee(transactionType, address, token)
-    return ethers.utils.formatEther(feeInWei.totalFee.toString())
+async function getFee(transactionType, address, token, zkSyncProvider, tokenSet) {
+    const fee = await zkSyncProvider.getTransactionFee(transactionType, address, token)
+    return tokenSet.formatToken(token, fee.totalFee)
 }
 
-async function withdrawToEthereum(wallet, amountToWithdraw, withdrawalFee, token, zksync, ethers) {
-    const closestPackableAmount = zksync.utils.closestPackableTransactionAmount(ethers.utils.parseEther(amountToWithdraw))
-    const closestPackableFee = zksync.utils.closestPackableTransactionFee(ethers.utils.parseEther(withdrawalFee))
+async function withdrawToEthereum(wallet, amountToWithdraw, withdrawalFee, token, zksync, tokenSet) {
+    const closestPackableAmount = zksync.utils.closestPackableTransactionAmount(tokenSet.parseToken(token, amountToWithdraw))
+    const closestPackableFee = zksync.utils.closestPackableTransactionFee(tokenSet.parseToken(token, withdrawalFee))
     const withdraw = await wallet.withdrawFromSyncToEthereum({
         ethAddress: wallet.address(),
         token: token,
