@@ -30,9 +30,24 @@ async function registerAccount(wallet) {
     console.log(`Registering the ${wallet.address()} account on zkSync`)
     if (!await wallet.isSigningKeySet()) {
         if (await wallet.getAccountId() === undefined) {
-            throw new Error('Unknown account');
+            throw new Error('Unknown account')
         }
-        const changePubkey = await wallet.setSigningKey();
-        await changePubkey.awaitReceipt();
+        const changePubkey = await wallet.setSigningKey()
+        await changePubkey.awaitReceipt()
+    }
+    console.log(`Account ${wallet.address()} registered`)
+}
+
+async function depositToZkSync(zkSyncWallet, token, amountToDeposit, ethers) {
+    const deposit = await zkSyncWallet.depositToSyncFromEthereum({
+        depositTo: zkSyncWallet.address(),
+        token: token,
+        amount: ethers.utils.parseEther(amountToDeposit)
+    })
+    try {
+        await deposit.awaitReceipt()
+    } catch (error) {
+        console.log('Error while awaiting confirmation from the zkSync operators.')
+        console.log(error)
     }
 }
